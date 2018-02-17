@@ -6,6 +6,9 @@ class Search extends React.Component {
     this.state = {
       term: ''
     }
+    // I had to add these following two lines, otherwise 'this' in onChange, search was bound to global obj
+    this.onChange = this.onChange.bind(this);
+    this.search = this.search.bind(this);
   }
 
   onChange (e) {
