@@ -11,20 +11,20 @@ const RepoList = (props) => (
           <th>Owner</th>
           <th>Description</th>
           <th>Fork Count</th>
-          <th>Star- gazers</th>
+          <th>Stargazers</th>
           <th>Last Update</th>
           <th>Is Fork</th>
         </tr>
         {props.repos.map((repo, index) => (
-<tr key={index}>
-  <td>{repo.name}</td>
-  <td>{1}</td>
-  <td>{repo.description}</td>
-  <td>{repo.forks_count}</td>
-  <td>{repo.stargazers_count}</td>
-  <td>{repo.updated_at}</td>
-  <td>{repo.fork}</td>
-</tr>
+        <tr key={index}>
+          <td><a href={repo.html_url}>{repo.name}</a></td>
+          <td>{repo.owner.login}</td>
+          <td>{repo.description}</td>
+          <td>{repo.forks_count}</td>
+          <td>{repo.stargazers_count}</td>
+          <td>{repo.updated_at}</td>
+          <td>{repo.fork ? "Yes" : "No"}</td>
+        </tr>
           ))}
       </tbody>
     </table>

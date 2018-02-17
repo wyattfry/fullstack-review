@@ -3,7 +3,7 @@ mongoose.connect('mongodb://localhost/fetcher');
 
 let repoSchema = mongoose.Schema({
   // TODO: your schema here!
-  id: Number,
+  id: {type: Number, index: true},
   name: String,
   owner: {login: String},
   html_url: String,
@@ -23,16 +23,36 @@ let save = (repos) => {
   // TODO: Your code here
   // This function should save a repo or repos to
   // the MongoDB
-  console.log('repos', repos);
   for (var i = 0; i < repos.length; i++) {
-    let repoToSave = new Repo(repos[i]);
-    repoToSave.save((err, repoToSave) => {
-      //                  what is this 2nd arg?
-      if (err) {
-        console.log('Repo could not be saved.');
-      }
-    });
+    saveOneRepo(repos[i]);
   }
 }
 
+let saveOneRepo = (repo) => {
+    Repo.find({id: repo.id}, (err, res) => {
+
+      if (err) {
+        console.log('DB save error', err);
+      } else if (res.length > 0) {
+        console.log('res.length', res.length);
+        console.log(`Repo "${repo.name}" already in database.`);
+      } else {
+        let repoToSave = new Repo(repo);
+        repoToSave.save((err, repoToSave) => {
+          //                  what is this 2nd arg?
+          if (err) {
+            console.log('Repo could not be saved.');
+          }
+        });
+      }
+    });
+}
+
+let find = (cb) => {
+  let result = Repo.find({}, (err, res) => {
+    cb(err, res);
+  });
+}
+
 module.exports.save = save;
+module.exports.find = find;
