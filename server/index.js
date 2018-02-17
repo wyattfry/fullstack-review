@@ -23,11 +23,8 @@ app.post('/repos', function (req, res) {
   // save the repo information in the database
   gh.getReposByUsername(req.body.username, (err, res, body) => {
     // saveToDatabase(body);
-    console.log('body', JSON.parse(body));
-    console.log('err', err);
     db.save(JSON.parse(body));
   });
-  // req.body.username
   res.end();
 });
 
@@ -35,7 +32,10 @@ app.get('/repos', function (req, res) {
   // TODO - your code here!
   // This route should send back the top 25 repos
   
-  // console.log('received GET request at /repos');
+  // Write a GET /repos endpoint that retrieves the top 25 repos 
+  // stored in your database, sorted by the criteria you decided
+  // on earlier.
+  db.find();
   res.end();
 });
 
