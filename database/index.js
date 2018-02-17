@@ -49,9 +49,7 @@ let saveOneRepo = (repo) => {
 }
 
 let find = (cb) => {
-  let result = Repo.find({}, (err, res) => {
-    cb(err, res);
-  });
+  Repo.find().sort('-stargazers_count').limit(25).exec(cb);
 }
 
 module.exports.save = save;
