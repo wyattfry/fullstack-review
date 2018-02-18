@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/fetcher');
+const Promise = require('bluebird');
+var dbURI = 'mongodb://localhost/fetcher';
+mongoose.connect(dbURI);
 
 let repoSchema = mongoose.Schema({
   // TODO: your schema here!
@@ -16,36 +18,34 @@ let repoSchema = mongoose.Schema({
 
 // models are classes with which documents (rows) are constructed.
 let Repo = mongoose.model('Repo', repoSchema);
-//                        what is this first argument?
+let dbWrites = [];
 
-// let save = (/* TODO */) => {
-let save = (repos) => {
-  // TODO: Your code here
-  // This function should save a repo or repos to
-  // the MongoDB
+let save = (repos, resolve, reject) => {
   for (var i = 0; i < repos.length; i++) {
-    saveOneRepo(repos[i]);
+    dbWrites.push(saveOneRepo(repos[i]));
   }
+  Promise.all(dbWrites).then(resolve, reject);
 }
 
 let saveOneRepo = (repo) => {
-    Repo.find({id: repo.id}, (err, res) => {
-
-      if (err) {
-        console.log('DB save error', err);
-      } else if (res.length > 0) {
-        console.log('res.length', res.length);
-        console.log(`Repo "${repo.name}" already in database.`);
-      } else {
-        let repoToSave = new Repo(repo);
-        repoToSave.save((err, repoToSave) => {
-          //                  what is this 2nd arg?
+  Repo.find({id: repo.id}, (err, res) => {
+    if (err) {
+      console.log('DB save error', err);
+    } else if (res.length > 0) {
+      console.log(`Repo "${repo.name}" already in database.`);
+    } else {
+      let repoToSave = new Repo(repo);
+      repoToSave.save((err, response) => {
+        return new Promise((resolve, reject) => {
           if (err) {
-            console.log('Repo could not be saved.');
+            reject(err);
+          } else {
+            resolve(response);
           }
         });
-      }
-    });
+      });
+    }
+  });
 }
 
 let find = (cb) => {

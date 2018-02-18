@@ -3,39 +3,18 @@ const express = require('express');
 const db = require('../database');
 let app = express();
 let sampleData = require('./../sampleData.js');
-
-// added the following 2 lines
 const parser = require('body-parser');
-// const morgan = require('morgan');
-
 app.use(express.static(__dirname + '/../client/dist'));
-
-// added these 3 middlewares
-// app.use(parser.json());
-// app.use(parser.urlencoded({ extended: false }));
 app.use(parser.urlencoded()); // allows POST body to be parsed
-// app.use(morgan);
-
 
 app.post('/repos', function (req, res) {
-  // TODO - your code here!
-  // This route should take the github username provided
-  // and get the repo information from the github API, then
-  // save the repo information in the database
   gh.getReposByUsername(req.body.username, (err, res, body) => {
-    // saveToDatabase(body);
-    db.save(JSON.parse(body));
+    db.save(JSON.parse(body), res.end, res.end);
   });
-  res.end();
+  // res.end(); // triggers the f() in the ajax request's 'success'
 });
 
 app.get('/repos', function (req, res) {
-  // TODO - your code here!
-  // This route should send back the top 25 repos
-  
-  // Write a GET /repos endpoint that retrieves the top 25 repos 
-  // stored in your database, sorted by the criteria you decided
-  // on earlier.
   db.find((err, result) => {
     if (err) {
       console.log('err', err);
@@ -46,12 +25,8 @@ app.get('/repos', function (req, res) {
       res.end();
     }
   });
-
-
 });
-
-let port = 1128;
-
+let port = process.env.PORT || 1128;
 app.listen(port, function() {
   console.log(`listening on port ${port}`);
 });

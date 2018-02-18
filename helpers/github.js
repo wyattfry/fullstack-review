@@ -6,7 +6,7 @@
 
 const request = require('request');
 // lookup request documentation (alterative API caller)
-const config = require('../config.js');
+const config = require('../config.js') || GITHUB_API_KEY;
 
 let getReposByUsername = (username, cb) => {
   // TODO - Use the request module to request repos for a specific

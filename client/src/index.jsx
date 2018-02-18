@@ -10,6 +10,7 @@ class App extends React.Component {
     this.state = { 
       repos: []
     };
+    this.getTopRepos = this.getTopRepos.bind(this);
     this.getTopRepos();
   }
 
@@ -22,13 +23,16 @@ class App extends React.Component {
         url: 'http://localhost:1128/repos',
         method: 'POST',
         data: {username: term},
+        // TODO use a promise to delay getTopRepos() until
+        // info is saved in DB
+        success: this.getTopRepos,
     });
   }
   render () {
     return (<div>
       <h1>Github Fetcher</h1>
-      <RepoList repos={this.state.repos}/>
       <Search onSearch={this.search.bind(this)}/>
+      <RepoList repos={this.state.repos}/>
     </div>)
   }
   getTopRepos() {
@@ -37,7 +41,6 @@ class App extends React.Component {
       method: 'GET',
       dataType: 'json',
       success: (data) => {
-        console.log('GET result:', data);
         this.setState({repos: data});
       },
       error: (err) => {
